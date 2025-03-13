@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Horses</title>
+  <link rel="stylesheet" href="styles/login-page.css">
+  <link rel="stylesheet" href="styles/header.css">
+  <link rel="stylesheet" href="styles/core.css">
+</head>
+<body>
+<header>
+  <div class="header-left">
+    <a href="index.html"><p class="logo-text">Horses</p></a>
+  </div>
+  <div class="header-middle">
+    <a href="game.html"><p class="menu-text">Game</p></a>
+  </div>
+  <div class="header-right">
+    <div class="-account-dropdown-container">
+      <button class="account-dropdown-button pixel-corners"><img class="user-icon" src="icons/user.png" ></button>
+      <div class="account-dropdown-content-hidden">
+        <div class="account-dropdown-content">
+          <a href="login-page.html"><button class="login-button pixel-corners" ><img class="login-icon" src="icons/login-.png" >Sign in</button></a>
+          <a href="register-page.html"><button class="login-button pixel-corners" ><img class="login-icon" src="icons/login-.png" >Sign up</button></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+<main class="main-container">
+  <div class="login-window  pixel-corners">
+    <div class="login-form-header">
+      <h1>Sign in</h1>
+    </div>
+    <div class="login-form-body">
+      <form id="login-form" class="login-form">
+        <div class="login-input-container">
+          <p class="login-input-label">Username:</p>
+          <input class="login-input" type="text" name="username" placeholder="Username" required>
+        </div>
+        <div class="password-input-container">
+          <p class="password-input-label">Password:</p>
+          <input class="password-input" type="password" name="password" placeholder="Password" required>
+        </div>
+        <input class="submit-button pixel-corners" type="submit" value="Sign in">
+      </form>
+      <div class="login-form-footer">
+        <p>Don't have an account? <a href="register-page.html">Sign up</a></p>
+      </div>
+    </div>
+  </div>
+</main>
+<script>
+  function submitForm(event) {
+    event.preventDefault();
+    const form = document.getElementById('login-form');
+    const data = {
+      username: form.username.value,
+      password: form.password.value
+    };
+
+    fetch('http://localhost:8080/api/perform_login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer AUTH_TOKEN'
+      },
+
+      body: JSON.stringify(data),
+      credentials: 'include'
+    })
+            .then(response => {
+      // Check if the response is OK (status 200-299)
+      if (!response.ok) {
+        return response.json().then(err => {
+          throw new Error(err.message || 'Login failed');
+        });
+      }
+      return response.json();  // Parse JSON if the response is OK
+    })
+            .then(data => {
+              // Handle the successful login response here
+              console.log(data.message);
+              window.location.href = 'waiting_room.html';
+            })
+            .catch(error => {
+              // Handle errors (e.g., invalid credentials, server issues)
+              console.error(error.message);
+            });
+  }
+
+  document.getElementById('login-form').addEventListener('submit', submitForm);
+</script>
+</body>
+</html>
+
+//waiting room -> new game or join -> if join check phase -> if phase = race - > wait until betting to join,.

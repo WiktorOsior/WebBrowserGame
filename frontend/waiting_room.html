@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Horses</title>
+  <link rel="stylesheet" href="styles/index.css">
+  <link rel="stylesheet" href="styles/header.css">
+  <link href="styles/core.css" rel="stylesheet">
+</head>
+<body>
+<header>
+  <div class="header-left">
+    <a href="index.html"><p class="logo-text">Horses</p></a>
+  </div>
+  <div class="header-middle">
+    <a href="game.html"><p class="menu-text">Game</p></a>
+  </div>
+  <div class="header-right">
+    <div class="-account-dropdown-container">
+      <button class="account-dropdown-button pixel-corners"><img class="user-icon" src="icons/user.png" ></button>
+      <div class="account-dropdown-content-hidden">
+        <div class="account-dropdown-content">
+          <a href="login-page.html"><button class="login-button pixel-corners" ><img class="login-icon" src="icons/login-.png" >Sign in</button></a>
+          <a href="register-page.html"><button class="login-button pixel-corners" ><img class="login-icon" src="icons/login-.png" >Sign up</button></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+<main>
+  <div class="start-button-container">
+    <button class="start-button pixel-corners" id="start-button">Start</button>
+  </div>
+  <div class="start-button-container">
+    <form id="join-form">
+      <input type="number" name="gameId" >
+      <input type="submit" class="start-button pixel-corners" id="join-button" value="Join">
+    </form>
+  </div>
+  <!--<img src="animation/horse-forback.png" class="horse-back-left">
+  <img src="animation/horse-forback-flip.png" class="horse-back-right">-->
+</main>
+<script>
+ const joinbutton = document.getElementById('join-button');
+ joinbutton.addEventListener('click', sendGameId);
+ function sendGameId(event){
+   event.preventDefault();
+    let gameId = document.getElementById('join-form').gameId.value;
+    //let params = new URLSearchParams(gameId);
+    const url = `http://localhost:8080/join/${gameId}`;
+    console.log(url);
+    fetch(url, {
+      method: 'GET',
+      headers: {
+        'Authorization': 'Bearer ' + document.cookie.split('AUTH-TOKEN=')[1]
+      }
+    })
+            .then(response =>   response.text())
+            .then(data => {
+              console.log(data);
+              window.location.href = 'game.html';
+            })
+            .catch(error => console.log(error));
+ }
+ console.log(document.cookie);
+ const startbutton = document.getElementById('start-button');
+    startbutton.addEventListener('click', startNewGame);
+    function startNewGame(event){
+      event.preventDefault();
+      console.log(document.cookie.split('AUTH-TOKEN=')[1]);
+      fetch('http://localhost:8080/create',{
+        method: 'GET',
+        headers: {
+          'Authorization': 'Bearer ' + document.cookie.split('AUTH-TOKEN=')[1]
+        }
+      })
+            .then(response =>
+              response.text())
+            .then(data => {
+              console.log(data);
+              window.location.href = 'game.html';
+            })
+            .catch(error => console.log(error));
+    }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Horses</title>
+  <link rel="stylesheet" href="styles/header.css">
+  <link href="styles/core.css" rel="stylesheet">
+  <link href="styles/game.css" rel="stylesheet">
+</head>
+<body>
+<header>
+  <div class="header-left">
+    <a href="index.html"><p class="logo-text">Horses</p></a>
+  </div>
+  <div class="header-middle">
+    <a href="game.html"><p class="menu-text">Game</p></a>
+  </div>
+  <div class="header-right">
+    <div class="-account-dropdown-container">
+      <button class="account-dropdown-button pixel-corners"><img class="user-icon" src="icons/user.png" ></button>
+      <div class="account-dropdown-content-hidden">
+        <div class="account-dropdown-content">
+          <p class="account-infomenu-text">Player name</p>
+          <p class="account-infomenu-text">Balance:</p>
+          <p class="balance">$0</p>
+          <button class="log-out-button"><p class="account-infomenu-text" id="logout-button">Log out</p></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+<main class="main">
+  <div class = "pixel-corners" id="winner-window-corners">
+    <div id="winner-window">
+      <p id="winner-text">Winner is <p id = "winner_id"></p></p>
+    </div>
+  </div>
+  <div class="game">
+    <div class="game-header">
+      <pre class = "betting-phase" id="game-header-text"></pre>
+      <div class =betting-phase id="timer"></div>
+    </div>
+    <div class="pixel-corners">
+    <div class="game-content" >
+      <div class="horse-track">
+        <div class="horse-trac-inside">
+        <img class = "horse-gif" src="animation/stadinghorse1.gif" alt="horse" id="horse-1">
+        </div>
+      </div>
+      <div class="horse-track">
+        <div class="horse-trac-inside">
+          <img class = "horse-gif" src="animation/stadinghorse1.gif" alt="horse" id="horse-2">
+        </div>
+      </div>
+      <div class="horse-track">
+        <div class="horse-trac-inside">
+          <img class = "horse-gif" src="animation/stadinghorse1.gif" alt="horse" id="horse-3">
+        </div>
+      </div>
+      <div class="horse-track">
+        <div class="horse-trac-inside">
+          <img class = "horse-gif" src="animation/stadinghorse1.gif" alt="horse" id="horse-4">
+        </div>
+      </div>
+      <div class="horse-track">
+        <div class="horse-trac-inside">
+          <img class = "horse-gif" src="animation/stadinghorse1.gif" alt="horse" id="horse-5">
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+  <div class="pixel-corners">
+    <div class="player-menu">
+      <div class="balance-info">
+        <pre>Your Balance: </pre>
+        <p class="balance-betting" id="balance-betting"></p>
+      </div>
+      <div class="betting">
+        <form>
+          <p>Bet value:</p>
+          <input class="bet-value-input" id="dynamic-input" type="number" value="0">
+          <p>Choose your horse:</p>
+          <select class="horse-select">
+            <option value="1">Horse 1</option>
+            <option value="2">Horse 2</option>
+            <option value="3">Horse 3</option>
+            <option value="4">horse 4</option>
+            <option value="5">Horse 5</option>
+          </select>
+          <button class="bet-value-button" type="submit" id="bet-button">Bet</button>
+        </form>
+      </div>
+    </div>
+    <div class="players-list">
+      <div class="players-list-header">
+      <p class="player-list-title">Players List:</p>
+      </div>
+      <div class="players-list-body" id="players-list-body">
+      </div>
+    </div>
+  </div>
+</main>
+<script>
+  const input = document.getElementById("dynamic-input");
+
+  function adjustInputWidth() {
+    const testSpan = document.createElement("span");
+    testSpan.style.visibility = "hidden";
+    testSpan.style.whiteSpace = "nowrap";
+    testSpan.style.font = window.getComputedStyle(input).font;
+    document.body.appendChild(testSpan);
+
+    // Use input value or placeholder to measure width
+    testSpan.textContent = input.value || input.placeholder;
+    const newWidth = testSpan.offsetWidth + 20; // Add padding
+    input.style.width = `${newWidth}px`;
+
+    document.body.removeChild(testSpan);
+  }
+
+  // Adjust width on input or when the page loads
+  input.addEventListener("input", adjustInputWidth);
+  window.addEventListener("load", adjustInputWidth);
+
+  function setTrackWidth() {
+    let track_width = document.getElementsByClassName("horse-track")[0]
+    let horse_width = document.getElementsByClassName(`horse-gif`)[0]
+    document.documentElement.style.setProperty("--end-position", track_width.offsetWidth - horse_width.offsetWidth + "px");
+  }
+  window.addEventListener("resize", setTrackWidth);
+  window.addEventListener("load", setTrackWidth);
+
+
+  //GAME
+class Game{
+    constructor() {
+      this.time_table= new Map();
+    }
+    generate_time_table(){
+      let min_max_table = [];
+      for (let i = 1; i <= 5; i++) {
+        this.time_table.set(i,Math.random() * 10+2)
+      }
+    }
+  start_race(){
+    for (let i = 1; i <= 5; i++) {
+      const element = document.getElementById("horse-" + i);
+      //element.offsetHeight;
+      element.src="animation/runninghorse1.gif";
+      console.log(this.time_table.get(`${i}`));
+      element.style.animation = `mymove ${this.time_table.get(`${i}`) + 's'} linear`;
+    }
+  }
+  reset_animations() {
+    for (let i = 1; i <= 5; i++) {
+      const element = document.getElementById("horse-" + i);
+      element.style.animation = 'none';
+      //element.offsetHeight;
+    }
+  }
+    winner(){
+      let id=1, min=this.time_table.get(1);
+      for (let i = 2; i <= 5; i++) {
+        if(this.time_table.get(i)<min){
+          min = this.time_table.get(i);
+          id = i;
+        }
+      }
+      console.log(id);
+      return id;
+    }
+    async check_if_finished(){
+      const horses = document.querySelectorAll('.horse-gif');
+      let finishedCount = 0;
+      const totalhorses = horses.length;
+
+      return new Promise(resolve => {
+        function handleAnimationEnd(event) {
+          finishedCount++;
+          console.log(`horse finished: ${event.target.id}`);
+          event.target.removeEventListener('animationend', handleAnimationEnd);
+          event.target.src="animation/stadinghorse1.gif";
+          if (finishedCount === totalhorses) {
+            console.log(`horses finished`);
+            resolve();
+          }
+        }
+        horses.forEach(horse => {
+          horse.addEventListener('animationend', handleAnimationEnd);
+        });
+      });
+    }
+
+  async start_game() {
+    this.start_race();
+    await this.check_if_finished();
+    this.reset_animations();
+    document.getElementById("winner_id").innerHTML = "You WON!";
+    document.getElementById("winner-window").style.display = "block";
+    await wait(4000);
+    document.getElementById("winner-window").style.display = "none";
+    document.getElementById("winner-window").style.opacity = 0;
+    console.log("Game finished");
+  }
+}
+
+  class Betting {
+    constructor() {}
+
+    async startTimer(duration) {
+      let timer = duration, minutes, seconds;
+      const timerElement = document.getElementById("timer");
+
+      const updateTimer = () => {
+        minutes = parseInt(timer / 60, 10);
+        seconds = parseInt(timer % 60, 10);
+
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        timerElement.innerHTML = minutes + ":" + seconds;
+        console.log(`Timer: ${minutes}:${seconds}`);
+
+        if (--timer < 0) {
+          timerElement.innerHTML = "00:00";
+          console.log("Timer finished");
+          return true;
+        }
+        return false;
+      };
+
+      return new Promise(resolve => {
+        const interval = setInterval(() => {
+          if (updateTimer()) {
+            clearInterval(interval);
+            resolve();
+          }
+        }, 1000);
+      });
+    }
+  }
+
+  function wait(duration){
+    return new Promise(resolve => {
+      setTimeout(() => {
+        resolve();
+      }, duration);
+    });
+  }
+
+  const game = new Game();
+  const betting = new Betting();
+
+  async function phases(){
+    document.getElementById("game-header-text").innerHTML = "Betting Phase: ";
+    await betting.startTimer(10);
+    await game.start_game();
+    let winner = game.winner();
+    document.getElementById("winner_id").innerHTML = "Horse nr. " + winner;
+    document.getElementById("winner-window").style.display = "block";
+    await wait(4000);
+    document.getElementById("winner-window").style.display = "none";
+    console.log("Game finished");
+  }
+
+  async function main(){
+    let i=true;
+      while(i){
+        await phases();
+        i++;
+        if(i>2){
+          i=false;
+        }
+      }
+  }
+
+
+
+
+  // WEBSOCKET
+  let game_id = 0;
+  let phase = "NONE";
+  const list_body = document.getElementById("players-list-body");
+
+  const socket = new WebSocket('ws://localhost:8080/websocket');
+  const authToken = document.cookie
+          .split("; ")
+          .find((row) => row.startsWith("AUTH-TOKEN="))
+          ?.split("=")[1];
+  socket.onopen = () => {
+    const message = {
+      type: "get-game-id",
+      authToken: authToken,
+    };
+    console.log(message);
+    socket.send(JSON.stringify(message));
+  };
+
+  socket.onmessage = (event) => {
+    console.log(event.data);
+    try{
+      const message = JSON.parse(event.data);
+      console.log(message);
+      if(message.type === "game-id"){
+        console.log(message.value);
+        game_id = message.value;
+      }
+      if(message.type === "bet-placed"){
+        console.log(message);
+        let player_div= document.createElement("div");
+        player_div.innerHTML =
+                `<div class="pixel-corners"></div>
+                  <div class="player-container" >
+                    <div class="player-name-container">
+                        <p class="player-name">${message.content}</p>
+                    </div>
+                    <div class="player-bet-container">
+                        <p class="player-bet-horse">Horse ${message.horse}</p>
+                        <p class="player-bet-value">${message.value} pt</p>
+                    </div>
+                  </div>
+                </div>`;
+        list_body.appendChild(player_div);
+      }
+      if(message.type === "phase-change"){
+        console.log(message);
+        if(message.content === "BETTING"){
+          while (list_body.firstChild) {
+            list_body.removeChild(list_body.firstChild);
+          }
+          betting.startTimer(25);
+          phase = "BETTING";
+        }else if(message.content === "RACING"){
+         phase="RACING";
+          game.time_table = new Map(Object.entries(message.map))
+         game.start_game();
+         console.log(game.time_table)
+          console.log(typeof game.time_table);
+        }
+      }
+      if(message.type === "winner"){
+        console.log(message);
+        document.getElementById("winner-window").style.opacity = 1;
+      }
+      if(message.type === "balance"){
+        console.log(message);
+        document.getElementById("balance-betting").innerHTML = message.value;
+      }
+    }
+    catch (e){
+      console.error(e);
+    }
+  };
+
+
+
+  let bet_button = document.getElementById("bet-button");
+    bet_button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        if (phase !== "BETTING") {
+          console.log("Not in betting phase");
+          return;
+        }
+        const bet_value = document.getElementById("dynamic-input").value;
+        const horse = document.querySelector(".horse-select").value;
+        const message = {
+        type: "bet",
+        authToken: authToken,
+        content: game_id,
+        value: bet_value,
+          horse: horse
+        };
+        console.log(message);
+        socket.send(JSON.stringify(message));
+    });
+
+  function submitForm(event) {
+    event.preventDefault();
+    // LOGIN-OUT
+    fetch('http://localhost:8080/logout', {
+      method: 'GET',
+      credentials: 'include'
+    })
+            .then(response => {
+              // Check if the response is OK (status 200-299)
+              if (!response.ok) {
+                return response.text().then(err => {
+                  throw new Error(err.message || 'Logout failed');
+                });
+              }
+              socket.close();
+              return response.text();  // Parse JSON if the response is OK
+            })
+            .then(data => {
+              // Handle the successful login response here
+              console.log(data.message);
+              window.location.href = 'index.html';
+            })
+            .catch(error => {
+              // Handle errors (e.g., invalid credentials, server issues)
+              console.error(error.message);
+            });
+  }
+
+  document.getElementById('logout-button').addEventListener('click', submitForm);
+
+</script>
+</body>
+</html>
